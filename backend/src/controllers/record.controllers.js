@@ -59,7 +59,7 @@ export const deleteRecord = asyncHandler(async (req, res) => {
 export const updateRecord = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  const record = await Record.find({
+  const record = await Record.findOne({
     _id: id,
     user: req.user._id,
     isDeleted: false, 
@@ -69,7 +69,7 @@ export const updateRecord = asyncHandler(async (req, res) => {
 
   const allowedFields = ["type", "title", "value", "meta"];
 
-  allowedFields.map((field) => {
+  allowedFields.forEach((field) => {
     if (req.body[field] !== undefined) {
       record[field] = req.body[field];
     }

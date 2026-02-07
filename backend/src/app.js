@@ -19,6 +19,16 @@ app.use(cookieParser());
 
 app.use("/api", healthRoutes); 
 app.use("/api/auth", authRoutes);
-app.use("/api/record", recordRoutes);
+app.use("/api/records", recordRoutes);
+
+app.use((err, _, res, _) => {
+    const statusCode = err.statusCode || 500;
+
+    res.status(statusCode).json({
+        success: false, 
+        message: err.message || "Server error", 
+        errors: err.errors || [], 
+    });
+});
 
 export default app;
