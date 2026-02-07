@@ -1,0 +1,25 @@
+:root {
+  --bg-main: #0f131a;
+  --bg-card: #171c26;
+  --bg-muted: #202637;
+
+  --text-main: #e8ebf0;
+  --text-muted: #9aa3b2;
+
+  --accent-primary: #7c8cff;
+  --accent-success: #4ade80;
+  --accent-danger: #ff6b6b;
+}
+
+[data-theme="light"] {
+  --bg-main: #f3f5fa;
+  --bg-card: #fbfcff;
+  --bg-muted: #e6eaf2;
+
+  --text-main: #121826;
+  --text-muted: #667085;
+
+  --accent-primary: #4f46e5;
+  --accent-success: #16a34a;
+  --accent-danger: #dc2626;
+}
