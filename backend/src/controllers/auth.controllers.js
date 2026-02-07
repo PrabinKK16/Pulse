@@ -1,14 +1,14 @@
 import User from "../models/user.model.js";
 import ApiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
-import { generateToken } from "../utils/generateTokens.js";
+import { generateToken } from "../utils/generateToken.js";
 
 export const register = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
   console.log(req.body);
 
-  if (!name || !name || !password)
+  if (!name || !email || !password)
     throw new ApiError(400, "All fields required");
 
   const userExists = await User.findOne({ email });
@@ -70,4 +70,8 @@ export const logout = asyncHandler((_, res) => {
       expires: new Date(0),
     })
     .json({ message: "Logged out successfully" });
+});
+
+export const getMe = asyncHandler((req, res) => {
+    res.status(200).json(req.user);
 });
