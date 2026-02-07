@@ -1,8 +1,28 @@
 import PageWrapper from "../../components/layout/PageWrapper";
 import Button from "../../components/ui/Button";
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { apiFetch } from "../../lib/api";
 
 export default function Dashboard() {
+  const [records, setRecords] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const loadRecords = async () => {
+      try {
+        const res = await apiFetch("/records?limit=5");
+        setRecords(res);
+      } catch (error) {
+        console.error("Failed to load records:", error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadRecords();
+  }, []);
+
   return (
     <PageWrapper>
       <motion.section
@@ -34,6 +54,48 @@ export default function Dashboard() {
           </Button>
         </div>
       </motion.section>
+
+      <section className="mt-20 space-y-6">
+        <h2 className="text-sm font-medium text-[var(--text-muted)]">
+          Recent activity
+        </h2>
+
+        {loading && (
+          <div className="text-sm text-[var(--text-muted)]">
+            Loading activity...
+          </div>
+        )}
+
+        {!loading && records.length === 0 && (
+          <div className="text-sm text-[var(--text-muted)]">
+            No activity yet. Start by adding your first record.
+          </div>
+        )}
+
+        {!loading && records.length > 0 && (
+          <div className="space-y-3">
+            {records.map((record) => (
+              <div
+                key={record._id}
+                className="p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--bg-muted)]"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-sm font-medium">{record.title}</div>
+                    <div className="text-xs text-[var(--text-muted)] capitalize">
+                      {record.type}
+                    </div>
+                  </div>
+
+                  {record.value !== null && (
+                    <div className="text-sm font-medium">{record.value}</div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
     </PageWrapper>
   );
 }
