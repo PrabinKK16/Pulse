@@ -1,44 +1,36 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { apiFetch } from "../src/lib/api";
 
-const AuthContext = createContext(null);
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const fetchMe = async () => {
+    try {
+      const me = await apiFetch("/auth/me");
+      setUser(me);
+    } catch (error) {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/auth/me", {
-          credentials: "include",
-        });
-
-        if (!res.ok) throw new Error("Not authenticated");
-
-        const data = await res.json();
-        setUser(data);
-      } catch (error) {
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadUser();
+    fetchMe();
   }, []);
 
   const logout = async () => {
-    await fetch("http://localhost:5000/api/auth/logout", {
-      credentials: "include",
-      method: "POST",
-    });
+    await apiFetch("/auth/logout", { method: "POST" })
 
     setUser(null);
   };
 
   const value = {
     user,
-    setUser,
+    refreshUser: fetchMe, 
     logout,
     loading,
   };

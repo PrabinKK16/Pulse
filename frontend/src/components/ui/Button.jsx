@@ -1,9 +1,10 @@
-export default function Button({ children, onClick, className = "" }) {
+export default function Button({ children, onClick, className = "", ...props }) {
   return (
     <button
+      {...props}
       onClick={onClick}
       className={`
-        group inline-flex items-center gap-2
+        group inline-flex items-center gap-2 justify-center
         px-4 py-2 rounded-full
         text-sm font-medium
         bg-[linear-gradient(180deg,var(--bg-muted),var(--bg-card))]
