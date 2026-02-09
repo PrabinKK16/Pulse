@@ -1,14 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "../../components/ui/Modal";
 import Button from "../../components/ui/Button";
 import { apiFetch } from "../../lib/api";
 
-function CreateRecordModal({ open, onClose, onCreated }) {
+export default function EditRecordModal({ open, onClose, record, onUpdated }) {
   const [type, setType] = useState("habit");
   const [title, setTitle] = useState("");
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!record) return;
+
+    setType(record.type);
+    setTitle(record.title);
+    setValue(record.value ?? "");
+  }, [record]);
 
   const submit = async () => {
     if (!title.trim()) {
@@ -20,8 +28,8 @@ function CreateRecordModal({ open, onClose, onCreated }) {
     setError("");
 
     try {
-      const record = await apiFetch("/records", {
-        method: "POST",
+      const updated = await apiFetch(`/records/${record._id}`, {
+        method: "PATCH",
         body: JSON.stringify({
           type,
           title,
@@ -29,28 +37,26 @@ function CreateRecordModal({ open, onClose, onCreated }) {
         }),
       });
 
-      onCreated(record);
+      onUpdated(updated);
       onClose();
-
-      setTitle("");
-      setType("habit");
-      setValue("");
-    } catch (error) {
-      setError(error.message || "Failed to create record");
+    } catch (e) {
+      setError(e.message || "Failed to update record");
     } finally {
       setLoading(false);
     }
   };
 
+  if (!record) return null;
+
   return (
     <Modal open={open} onClose={onClose}>
-      <h3 className="text-sm font-medium mb-4">Create record</h3>
+      <h3 className="text-sm font-medium mb-4">Edit record</h3>
 
       <div className="space-y-4">
         <select
           value={type}
           onChange={(e) => setType(e.target.value)}
-          className="w-full rounded-lg bg-[var(--bg-muted)] px-3 py-2 text-sm outline-noe"
+          className="w-full rounded-lg bg-[var(--bg-muted)] px-3 py-2 text-sm outline-none"
         >
           <option value="habit">Habit</option>
           <option value="expense">Expense</option>
@@ -68,12 +74,15 @@ function CreateRecordModal({ open, onClose, onCreated }) {
         <input
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder="Value"
+          placeholder="Value (optional)"
+          type="number"
           className="w-full rounded-lg bg-[var(--bg-muted)] px-3 py-2 text-sm outline-none"
         />
 
         {error && (
-          <div className="text-xs text-[var(--accent-danger)]">{error}</div>
+          <div className="text-xs text-[var(--accent-danger)]">
+            {error}
+          </div>
         )}
       </div>
 
@@ -87,11 +96,9 @@ function CreateRecordModal({ open, onClose, onCreated }) {
         </button>
 
         <Button onClick={submit} disabled={loading}>
-          {loading ? "Creating..." : "Create"}
+          {loading ? "Saving…" : "Save"}
         </Button>
       </div>
     </Modal>
   );
 }
-
-export default CreateRecordModal;

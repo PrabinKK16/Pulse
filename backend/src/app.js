@@ -21,7 +21,7 @@ app.use("/api", healthRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/records", recordRoutes);
 
-app.use((err, _, res, _) => {
+app.use((err, _, res, __) => {
     const statusCode = err.statusCode || 500;
 
     res.status(statusCode).json({
