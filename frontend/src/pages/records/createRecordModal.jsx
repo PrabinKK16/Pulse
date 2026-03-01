@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "../../components/ui/Modal";
 import Button from "../../components/ui/Button";
 import { apiFetch } from "../../lib/api";
@@ -10,7 +10,18 @@ function CreateRecordModal({ open, onClose, onCreated }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    if (!open) {
+      setTitle("");
+      setType("habit");
+      setValue("");
+      setError("");
+    }
+  }, [open]);
+
   const submit = async () => {
+    if (loading) return;
+
     if (!title.trim()) {
       setError("Title is required");
       return;
@@ -69,6 +80,7 @@ function CreateRecordModal({ open, onClose, onCreated }) {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder="Value"
+          type="number"
           className="w-full rounded-lg bg-[var(--bg-muted)] px-3 py-2 text-sm outline-none"
         />
 

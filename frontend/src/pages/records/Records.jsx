@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import PageWrapper from "../../components/layout/PageWrapper";
 import EditRecordModal from "./EditRecordModal";
+import RecordsFilters from "./RecordsFilters";
 import { apiFetch } from "../../lib/api";
 
 export default function Records() {
@@ -9,15 +10,22 @@ export default function Records() {
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const limit = 10;
+  const [typeFilter, setTypeFilter] = useState("");
 
   const [editing, setEditing] = useState(null);
+
+  const limit = 10;
 
   useEffect(() => {
     const loadRecords = async () => {
       setLoading(true);
+
       try {
-        const res = await apiFetch(`/records?page=${page}&limit=${limit}`);
+        const query = `/records?page=${page}&limit=${limit}${
+          typeFilter ? `&type=${typeFilter}` : ""
+        }`;
+
+        const res = await apiFetch(query);
 
         setRecords(res.data);
         setTotalPages(res.meta.totalPages);
@@ -29,7 +37,11 @@ export default function Records() {
     };
 
     loadRecords();
-  }, [page]);
+  }, [page, typeFilter]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [typeFilter]);
 
   const handleDelete = async (id) => {
     try {
@@ -38,7 +50,6 @@ export default function Records() {
       setRecords((prev) => {
         const updated = prev.filter((r) => r._id !== id);
 
-        // If last item on page is deleted, go back one page
         if (updated.length === 0 && page > 1) {
           setPage((p) => p - 1);
         }
@@ -54,8 +65,12 @@ export default function Records() {
     <PageWrapper>
       <h1 className="heading text-2xl mb-6">All Records</h1>
 
+      <RecordsFilters onChange={setTypeFilter} />
+
       {loading && (
-        <div className="text-sm text-[var(--text-muted)]">Loading records…</div>
+        <div className="text-sm text-[var(--text-muted)]">
+          Loading records…
+        </div>
       )}
 
       {!loading && records.length === 0 && (
@@ -74,7 +89,9 @@ export default function Records() {
               >
                 <div className="flex items-center justify-between group">
                   <div>
-                    <div className="text-sm font-medium">{record.title}</div>
+                    <div className="text-sm font-medium">
+                      {record.title}
+                    </div>
                     <div className="text-xs text-[var(--text-muted)] capitalize">
                       {record.type}
                     </div>
@@ -82,7 +99,9 @@ export default function Records() {
 
                   <div className="flex items-center gap-3">
                     {record.value !== null && (
-                      <div className="text-sm font-medium">{record.value}</div>
+                      <div className="text-sm font-medium">
+                        {record.value}
+                      </div>
                     )}
 
                     <button
@@ -104,7 +123,6 @@ export default function Records() {
             ))}
           </div>
 
-          {/* Pagination */}
           <div className="mt-6 flex items-center justify-between text-sm">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -119,7 +137,9 @@ export default function Records() {
             </span>
 
             <button
-              onClick={() => setPage((p) => p + 1)}
+              onClick={() =>
+                setPage((p) => Math.min(totalPages, p + 1))
+              }
               disabled={page >= totalPages}
               className="text-[var(--text-muted)] disabled:opacity-40"
             >
@@ -135,7 +155,7 @@ export default function Records() {
         onClose={() => setEditing(null)}
         onUpdated={(updated) =>
           setRecords((prev) =>
-            prev.map((r) => (r._id === updated._id ? updated : r)),
+            prev.map((r) => (r._id === updated._id ? updated : r))
           )
         }
       />

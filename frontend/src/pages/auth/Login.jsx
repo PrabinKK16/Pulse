@@ -59,14 +59,16 @@ export default function Login() {
           />
 
           {error && (
-            <div className="text-xs text-[var(--accent-danger)]">
-              {error}
-            </div>
+            <div className="text-xs text-[var(--accent-danger)]">{error}</div>
           )}
         </div>
 
         <div className="mt-6">
-          <Button type="submit" disabled={loading} className="w-full text-center">
+          <Button
+            type="submit"
+            disabled={loading}
+            className="w-full text-center"
+          >
             {loading ? "Signing in…" : "Sign in"}
           </Button>
         </div>

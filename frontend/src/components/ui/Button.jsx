@@ -1,4 +1,9 @@
-export default function Button({ children, onClick, className = "", ...props }) {
+export default function Button({
+  children,
+  onClick,
+  className = "",
+  ...props
+}) {
   return (
     <button
       {...props}

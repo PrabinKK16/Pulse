@@ -1,9 +1,5 @@
 function PageWrapper({ children }) {
-  return (
-    <div className='w-full'>
-        { children }
-    </div>
-  )
+  return <div className="w-full">{children}</div>;
 }
 
-export default PageWrapper
+export default PageWrapper;

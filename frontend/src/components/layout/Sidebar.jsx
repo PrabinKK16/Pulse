@@ -13,8 +13,12 @@ export default function Sidebar() {
       <h1 className="heading text-2xl tracking-tight mb-10">Pulse</h1>
 
       <nav className="space-y-1">
-        <NavLink to="/" className={linkClass}>
+        <NavLink to="/" end className={linkClass}>
           Dashboard
+        </NavLink>
+
+        <NavLink to="/records" className={linkClass}>
+          Records
         </NavLink>
       </nav>
     </aside>

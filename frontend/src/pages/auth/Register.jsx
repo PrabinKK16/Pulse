@@ -64,9 +64,7 @@ export default function Register() {
           />
 
           {error && (
-            <div className="text-xs text-[var(--accent-danger)]">
-              {error}
-            </div>
+            <div className="text-xs text-[var(--accent-danger)]">{error}</div>
           )}
         </div>
 

@@ -24,7 +24,7 @@ export const register = asyncHandler(async (req, res) => {
     .cookie("token", token, {
       httpOnly: true,
       sameSite: "strict",
-      secure: false,
+      secure: process.env.NODE_ENV === "production",
     })
     .json({
       id: user._id,

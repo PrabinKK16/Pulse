@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import PageWrapper from './../../components/layout/PageWrapper';
+import PageWrapper from "./../../components/layout/PageWrapper";
 import Button from "../../components/ui/Button";
 import CreateRecordModal from "../records/createRecordModal";
 import EditRecordModal from "../records/EditRecordModal";
@@ -121,9 +121,7 @@ export default function Dashboard() {
                 >
                   <div className="flex items-center justify-between group">
                     <div>
-                      <div className="text-sm font-medium">
-                        {record.title}
-                      </div>
+                      <div className="text-sm font-medium">{record.title}</div>
                       <div className="text-xs text-[var(--text-muted)] capitalize">
                         {record.type}
                       </div>
@@ -193,7 +191,7 @@ export default function Dashboard() {
         onClose={() => setEditing(null)}
         onUpdated={(updated) =>
           setRecords((prev) =>
-            prev.map((r) => (r._id === updated._id ? updated : r))
+            prev.map((r) => (r._id === updated._id ? updated : r)),
           )
         }
       />
